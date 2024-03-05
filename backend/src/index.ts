@@ -23,10 +23,10 @@ app.post('/api/v1/user/signup', async (c) => {
         password: body.password
       }
     });
-    console.log(user);
-    const token = await sign(user, c.env?.JWT_SECRET)
-    console.log(token)
-    return c.text(token)
+    const jwt = await sign({
+      id: user.id
+    }, c.env.JWT_SECRET);
+    return c.text(jwt);
   } catch (e) {
     console.log(c.env.DATABASE_URL)
     console.log(e);
