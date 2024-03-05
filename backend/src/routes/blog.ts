@@ -18,12 +18,8 @@ blogRouter.use('/*', async (c, next) => {
   const authHeader = c.req.header("authorization") || "";
   const header = authHeader.split(" ")[1]
 
-  console.log(header)
-  console.log(authHeader)
-
   try {
     const user = await verify(header, c.env?.JWT_SECRET)
-    console.log("next router");
     if (user) {
       c.set("userId", user.id);
       await next()
@@ -39,9 +35,11 @@ blogRouter.use('/*', async (c, next) => {
 blogRouter.post('/', async (c) => {
   const body = await c.req.json();
   const authorId = c.get("userId");
+
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate())
+
   const blog = await prisma.blog.create({
     data: {
       title: body.title,
@@ -49,13 +47,28 @@ blogRouter.post('/', async (c) => {
       authorId: Number(authorId)
     }
   });
-  console.log(blog);
-  return c.json({ id: blog.id });
+  return c.json(blog);
 }
 )
-blogRouter.put('/', (c) => {
-  return c.text('put blog')
+
+blogRouter.put('/', async (c) => {
+  const body = await c.req.json();
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env?.DATABASE_URL,
+  }).$extends(withAccelerate())
+
+  const blog = await prisma.blog.update({
+    where: {
+      id: body.id,
+    },
+    data: {
+      title: body.title,
+      content: body.content
+    }
+  });
+  return c.json(blog)
 })
+
 blogRouter.get('/:id', (c) => {
   const id = c.req.param('id')
   console.log(id)
