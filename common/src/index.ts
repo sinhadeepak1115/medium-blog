@@ -6,7 +6,11 @@ export const signInput = z.object({
   name: z.string().optional()
 })
 
+export type SignInput = z.infer<typeof signInput>
+
 export const postInput = z.object({
   title: z.string().toUpperCase(),
   content: z.string()
 })
+
+export type PostInput = z.infer<typeof postInput>
