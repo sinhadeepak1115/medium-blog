@@ -70,6 +70,16 @@ blogRouter.put('/', async (c) => {
   return c.json(blog)
 })
 
+blogRouter.get('/bulk', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env?.DATABASE_URL,
+  }).$extends(withAccelerate())
+
+  const blogs = await prisma.blog.findMany();
+
+  return c.json(blogs)
+})
+
 blogRouter.get('/:id', async (c) => {
   const id = Number(await c.req.param('id'))
 
@@ -85,7 +95,5 @@ blogRouter.get('/:id', async (c) => {
   console.log(id)
   return c.json(blog)
 })
-blogRouter.get('/bluk', (c) => {
-  return c.text('get blog bulk')
-})
+
 
