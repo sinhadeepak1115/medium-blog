@@ -5,3 +5,8 @@ export const signInput = z.object({
   password: z.string().min(6),
   name: z.string().optional()
 })
+
+export const postInput = z.object({
+  title: z.string().toUpperCase(),
+  content: z.string()
+})
